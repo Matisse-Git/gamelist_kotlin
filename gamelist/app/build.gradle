@@ -47,13 +47,19 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
 
-    //API LIBRARIES
-    //TODO Delete if RetroFit Works
-    implementation 'com.squareup.okhttp3:okhttp:3.8.1'
-    implementation 'com.beust:klaxon:5.0.1'
+    //FINDBYID LIBRARIES
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "android.arch.lifecycle:viewmodel:1.1.0"
+
     //API LIBRARIES
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+
+    //LIST LIBRARIES
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+
+    //UI LIBRARIES
+    implementation "androidx.cardview:cardview:1.0.0"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

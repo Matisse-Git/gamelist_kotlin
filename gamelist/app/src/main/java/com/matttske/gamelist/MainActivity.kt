@@ -8,7 +8,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.beust.klaxon.Klaxon
 import com.matttske.gamelist.data.API
 import com.matttske.gamelist.data.Game
 import com.matttske.gamelist.data.ReturnValueCallBack
@@ -30,12 +29,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val callbackObj = object: ReturnValueCallBack{
-            override fun onSuccess(value: List<Game>) {
-                Log.d("First Game ID", value[0].id.toString())
-            }
-        }
 
-        API().getAllGames((callbackObj))
     }
 }
