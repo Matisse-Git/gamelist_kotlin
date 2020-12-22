@@ -31,6 +31,31 @@
         android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/game_item"/>
+        tools:listitem="@layout/game_item"
+        android:layout_above="@+id/list_buttons"/>
+
+    <LinearLayout
+        android:id="@+id/list_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/insert_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Insert Item"
+            android:onClick="insertItem"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Remove Item"
+            android:onClick="removeItem"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
