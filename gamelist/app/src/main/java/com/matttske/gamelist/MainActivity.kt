@@ -2,19 +2,19 @@ package com.matttske.gamelist
 
 import android.os.Bundle
 import android.util.Log
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.matttske.gamelist.data.API
-import com.matttske.gamelist.data.Game
-import com.matttske.gamelist.data.ReturnValueCallBack
-import okhttp3.*
-import java.io.IOException
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.matttske.gamelist.ui.home.HomeFragment
+
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var homeFragment: HomeFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,5 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-
     }
 }

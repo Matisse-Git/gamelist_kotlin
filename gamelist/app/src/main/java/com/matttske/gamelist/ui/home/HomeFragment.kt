@@ -1,13 +1,12 @@
 package com.matttske.gamelist.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +23,9 @@ class HomeFragment : Fragment() {
     private lateinit var gameList: List<Game>
     private lateinit var recyclerView: RecyclerView
 
+    private lateinit var loadingCircle: ProgressBar
+    private lateinit var loadingText: TextView
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -38,19 +40,23 @@ class HomeFragment : Fragment() {
             textView.text = it
         })*/
 
-        getGameList()
         recyclerView = root.findViewById(R.id.recycler_view)
-
+        loadingCircle = root.findViewById(R.id.loading_circle)
+        loadingText = root.findViewById(R.id.loading_text)
+        getGameList()
+        
         return root
     }
 
-    private fun getGameList() {
+    public fun getGameList() {
         val callbackObj = object : ReturnValueCallBack {
             override fun onSuccess(value: List<Game>) {
                 gameList = value
                 recyclerView.adapter = GameRecycleAdapter(gameList)
                 recyclerView.layoutManager = LinearLayoutManager(activity)
                 recyclerView.setHasFixedSize(true)
+                loadingCircle.visibility = View.GONE
+                loadingText.visibility = View.GONE
             }
         }
 
