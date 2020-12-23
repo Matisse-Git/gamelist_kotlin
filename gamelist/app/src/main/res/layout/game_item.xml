@@ -6,8 +6,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp">
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/game_background"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:contentDescription="game_background"
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/title_text"
@@ -16,7 +23,9 @@
             android:text="Line 1"
             android:textColor="@color/teal_700"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:transitionName="game_title"
+            android:padding="8dp"/>
 
         <TextView
             android:id="@+id/subtitle_text"
@@ -25,7 +34,8 @@
             android:text="Line 2"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:layout_below="@id/title_text"/>
+            android:layout_below="@id/title_text"
+            android:padding="8dp"/>
 
     </RelativeLayout>
 

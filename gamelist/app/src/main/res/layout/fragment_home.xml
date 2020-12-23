@@ -25,6 +25,15 @@
         android:textSize="12pt"
         android:text="Loading..." />
 
+    <ProgressBar
+        android:id="@+id/new_page_loading_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:minHeight="50dp"
+        android:minWidth="50dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:padding="4dp"
@@ -32,28 +41,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/game_item"
-        android:layout_above="@+id/list_buttons"/>
-
-    <LinearLayout
-        android:id="@+id/list_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/insert_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Insert Item" />
-
-        <Button
-            android:id="@+id/remove_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Remove Item" />
-
-    </LinearLayout>
+        android:layout_above="@id/new_page_loading_circle"/>
 
 </RelativeLayout>

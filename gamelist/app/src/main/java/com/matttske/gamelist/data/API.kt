@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 class API {
 
@@ -16,10 +17,10 @@ class API {
         .build()
         .create(GameService::class.java)
 
-    fun getAllGames(returnCallBack: ReturnValueCallBack){
+    fun getAllGames(returnCallBack: ReturnValueCallBack, page: Int){
         /* Calls the endpoint set on getUsers (/api) from UserService using enqueue method
         * that creates a new worker thread to make the HTTP call */
-        service.getGames().enqueue(object : Callback<GameResp> {
+        service.getGames(page).enqueue(object : Callback<GameResp> {
             /* The HTTP call failed. This method is run on the main thread */
             override fun onFailure(call: Call<GameResp>, t: Throwable) {
                 Log.d("Called 'getAllGames'", "An error happened!")
@@ -29,7 +30,7 @@ class API {
             /* The HTTP call was successful, we should still check status code and response body
              * on a production app. This method is run on the main thread */
             override fun onResponse(call: Call<GameResp>, response: Response<GameResp>) {
-                Log.d("Called 'getAllGames'", "Call successful")
+                Log.d("Called 'getAllGames'", "Call successful at page $page")
                 returnCallBack.onSuccess(response.body()!!.results)
             }
         })
@@ -49,6 +50,8 @@ data class GameResp(val results: List<Game>)
  * these at runtime */
 interface GameService {
     @GET("games")
-    fun getGames(): Call<GameResp>
+    fun getGames(
+        @Query("page") page: Int
+    ): Call<GameResp>
 }
 

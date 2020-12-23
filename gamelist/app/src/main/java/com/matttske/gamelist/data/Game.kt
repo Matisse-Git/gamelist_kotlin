@@ -1,6 +1,17 @@
 package com.matttske.gamelist.data
 
-class Game(var id: Int, var slug: String, var name: String, var released: String, var tba: Boolean, var background_image: String, var rating: String, var metacritic: String) {
+import java.io.Serializable
+
+class Game(
+    var id: Int,
+    var slug: String,
+    var name: String,
+    var released: String,
+    var tba: Boolean,
+    var background_image: String,
+    var rating: String,
+    var metacritic: String
+): Serializable  {
 
 }
 
