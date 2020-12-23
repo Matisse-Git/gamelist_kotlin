@@ -40,21 +40,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/insert_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Insert Item"
-            android:onClick="insertItem"/>
+            android:text="Insert Item" />
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/remove_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Remove Item"
-            android:onClick="removeItem"/>
+            android:text="Remove Item" />
 
     </LinearLayout>
 

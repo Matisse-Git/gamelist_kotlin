@@ -48,7 +48,7 @@ data class GameResp(val results: List<Game>)
  * method per endpoint, and use the @Path, @Query and other annotations to customize
  * these at runtime */
 interface GameService {
-    @GET("games?page_size=20")
+    @GET("games")
     fun getGames(): Call<GameResp>
 }
 
