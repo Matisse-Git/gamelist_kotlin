@@ -1,5 +1,6 @@
 package com.matttske.gamelist.data
 
+import android.text.AlteredCharSequence
 import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,7 +21,7 @@ class API {
     fun getAllGames(returnCallBack: ReturnValueCallBack, page: Int){
         /* Calls the endpoint set on getUsers (/api) from UserService using enqueue method
         * that creates a new worker thread to make the HTTP call */
-        service.getGames(page).enqueue(object : Callback<GameResp> {
+        service.getGames(page, 5).enqueue(object : Callback<GameResp> {
             /* The HTTP call failed. This method is run on the main thread */
             override fun onFailure(call: Call<GameResp>, t: Throwable) {
                 Log.d("Called 'getAllGames'", "An error happened!")
@@ -31,6 +32,20 @@ class API {
              * on a production app. This method is run on the main thread */
             override fun onResponse(call: Call<GameResp>, response: Response<GameResp>) {
                 Log.d("Called 'getAllGames'", "Call successful at page $page")
+                returnCallBack.onSuccess(response.body()!!.results)
+            }
+        })
+    }
+
+    fun searchGames(returnCallBack: ReturnValueCallBack, query: String){
+        service.searchGames(query).enqueue(object: Callback<GameResp> {
+            override fun onFailure(call: Call<GameResp>, t: Throwable) {
+                Log.d("Called 'searchGames'", "An error happened!")
+                t.printStackTrace()
+            }
+
+            override fun onResponse(call: Call<GameResp>, response: Response<GameResp>) {
+                Log.d("Called 'searchGames'", "Call successful for query '$query'")
                 returnCallBack.onSuccess(response.body()!!.results)
             }
         })
@@ -51,7 +66,13 @@ data class GameResp(val results: List<Game>)
 interface GameService {
     @GET("games")
     fun getGames(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("page_size") pageSize: Int
+    ): Call<GameResp>
+
+    @GET("games")
+    fun searchGames(
+        @Query("search") query: String
     ): Call<GameResp>
 }
 

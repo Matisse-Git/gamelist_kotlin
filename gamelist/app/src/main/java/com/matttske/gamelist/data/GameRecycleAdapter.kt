@@ -28,7 +28,8 @@ class GameRecycleAdapter(private val gameList: List<Game>, private val listener:
         val currentItem = gameList[position]
 
         holder.titleView.text = currentItem.name
-        holder.subtitleView.text = currentItem.released
+        holder.releaseDateView.text = currentItem.released
+        holder.ratingView.text = currentItem.rating
 
         Glide.with(context).load(currentItem.background_image)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -41,8 +42,9 @@ class GameRecycleAdapter(private val gameList: List<Game>, private val listener:
 
     inner class GameItemViewHolder(gameView: View) : RecyclerView.ViewHolder(gameView), View.OnClickListener{
         val titleView: TextView = gameView.findViewById(R.id.title_text)
-        val subtitleView: TextView = gameView.findViewById(R.id.subtitle_text)
+        val releaseDateView: TextView = gameView.findViewById(R.id.release_text)
         val backgroundView: ImageView = gameView.findViewById(R.id.game_background)
+        val ratingView: TextView = gameView.findViewById(R.id.rating_text)
 
         init {
             itemView.setOnClickListener(this)
