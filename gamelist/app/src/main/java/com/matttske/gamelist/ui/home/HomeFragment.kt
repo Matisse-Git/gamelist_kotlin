@@ -1,5 +1,6 @@
 package com.matttske.gamelist.ui.home
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.matttske.gamelist.MainActivity
 import com.matttske.gamelist.R
 import com.matttske.gamelist.data.API
@@ -23,6 +25,7 @@ import com.matttske.gamelist.data.Game
 import com.matttske.gamelist.data.GameRecycleAdapter
 import com.matttske.gamelist.data.ReturnValueCallBack
 import com.matttske.gamelist.ui.gameDetails.GameDetailed
+import com.matttske.gamelist.ui.searching.search_game
 import kotlin.random.Random
 
 class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
@@ -33,6 +36,7 @@ class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
     private lateinit var loadingCircle: ProgressBar
     private lateinit var loadingText: TextView
     private lateinit var newPageLoadingCircle: ProgressBar
+    private lateinit var searchButton: MaterialButton
 
     private lateinit var gameList: ArrayList<Game>
     private lateinit var adapter: GameRecycleAdapter
@@ -64,6 +68,7 @@ class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
 
+        activity?.setTheme(R.style.Theme_Gamelist)
 
         getGameList()
 
@@ -77,6 +82,13 @@ class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
 
         newPageLoadingCircle = root.findViewById(R.id.new_page_loading_circle)
         newPageLoadingCircle.visibility = View.GONE
+
+        searchButton = root.findViewById(R.id.search_card)
+
+        searchButton.setOnClickListener {
+            val intent = Intent(activity, search_game::class.java)
+            startActivity(intent)
+        }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
