@@ -55,12 +55,12 @@ class API {
     fun getGameById(returnCallBack: SingleReturnValueCallBack, id: Int){
         service.getGameById(id).enqueue(object: Callback<Game> {
             override fun onFailure(call: Call<Game>, t: Throwable) {
-                Log.d("Called 'searchGames'", "An error happened!")
+                Log.d("Called 'getGameById'", "An error happened!")
                 t.printStackTrace()
             }
 
             override fun onResponse(call: Call<Game>, response: Response<Game>) {
-                Log.d("Called 'searchGames'", "Call successful for game id '$id'")
+                Log.d("Called 'getGameById'", "Call successful for game id '$id'")
                 returnCallBack.onSuccess(response.body()!!)
             }
         })
