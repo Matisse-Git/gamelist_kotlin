@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "340635737604",
+    "project_id": "gametracker-kotlin",
+    "storage_bucket": "gametracker-kotlin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340635737604:android:8ab6720bb75462aca75f51",
+        "android_client_info": {
+          "package_name": "com.matttske.gamelist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "340635737604-ivbaulsj0ltour1lj7kf6so9qcurost2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqwMWtmzPcLqi5BBZfBP2K1Dp5xqZ51uQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "340635737604-ivbaulsj0ltour1lj7kf6so9qcurost2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 class API {
@@ -50,10 +51,28 @@ class API {
             }
         })
     }
+
+    fun getGameById(returnCallBack: SingleReturnValueCallBack, id: Int){
+        service.getGameById(id).enqueue(object: Callback<Game> {
+            override fun onFailure(call: Call<Game>, t: Throwable) {
+                Log.d("Called 'searchGames'", "An error happened!")
+                t.printStackTrace()
+            }
+
+            override fun onResponse(call: Call<Game>, response: Response<Game>) {
+                Log.d("Called 'searchGames'", "Call successful for game id '$id'")
+                returnCallBack.onSuccess(response.body()!!)
+            }
+        })
+    }
 }
 
 interface ReturnValueCallBack {
     fun onSuccess(value: List<Game>)
+}
+
+interface SingleReturnValueCallBack{
+    fun onSuccess(value: Game)
 }
 
 /* Kotlin data/model classes that map the JSON response, we could also add Moshi
@@ -74,5 +93,10 @@ interface GameService {
     fun searchGames(
         @Query("search") query: String
     ): Call<GameResp>
+
+    @GET("games/{id}")
+    fun getGameById(
+        @Path("id") id: Int
+    ): Call<Game>
 }
 

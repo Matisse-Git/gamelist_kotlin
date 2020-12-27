@@ -2,6 +2,7 @@ package com.matttske.gamelist.ui.home
 
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -67,8 +68,6 @@ class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
         layoutManager = LinearLayoutManager(activity)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-
-        activity?.setTheme(R.style.Theme_Gamelist)
 
         getGameList()
 
