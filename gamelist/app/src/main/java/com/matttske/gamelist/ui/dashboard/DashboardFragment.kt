@@ -12,6 +12,7 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -116,6 +117,7 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
     }
 
     private fun updateFirestoreList(){
+        Toast.makeText(activity?.applicationContext, "Your list has been saved!", Toast.LENGTH_SHORT).show()
         fb.updateDocumentInGames(currentListName, idList)
     }
 

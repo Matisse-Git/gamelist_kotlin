@@ -43,6 +43,21 @@ class Firebase {
                 .addOnFailureListener { e -> Log.w("Firestore", "Error writing document", e) }
     }
 
+
+    fun addNewGameList(listName: String, callback: writeCallback, initGames: List<Int> = ArrayList()){
+        val newList = hashMapOf(
+                "game_ids" to initGames
+        )
+
+        db.collection("Users/${User.id()}/games")
+                .document(listName)
+                .set(newList)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "Game List with name $listName successfully written!")
+                    callback.onSuccess()
+                }
+    }
+
     fun getAllListNames(callback: firebaseListNameCallback){
         db.collection("Users/${User.id()}/games")
                 .get()
@@ -65,5 +80,9 @@ class Firebase {
 
     interface firebaseListNameCallback{
         fun onSuccess(listNames: List<Pair<String, Int>>)
+    }
+
+    interface writeCallback{
+        fun onSuccess()
     }
 }

@@ -1,15 +1,21 @@
 package com.matttske.gamelist.ui.gameDetails
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 import com.matttske.gamelist.R
 import com.matttske.gamelist.data.Firebase
+import com.matttske.gamelist.data.Game
 import com.matttske.gamelist.data.ListNameFIlterAdapter
+import com.matttske.gamelist.data.SingleReturnValueCallBack
 
 
 class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnItemCLickListener {
@@ -43,6 +49,11 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
         listNameRecyclerView.adapter = listNameAdapter
         listNameRecyclerView.layoutManager = LinearLayoutManager(this)
         listNameRecyclerView.setHasFixedSize(true)
+
+        val addListButton = findViewById<Button>(R.id.add_list_button)
+        addListButton.setOnClickListener {
+            addNewList()
+        }
     }
 
     private fun sendDataBack(result: String){
@@ -52,8 +63,32 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
         finish()
     }
 
+    private fun addNewList(){
+        val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_new_list, null)
+        val mBuilder = AlertDialog.Builder(this)
+                .setView(mDialogView)
+                .setTitle("New List")
+        val  mAlertDialog = mBuilder.show()
+
+        val callbackObj = object : Firebase.writeCallback {
+            override fun onSuccess() {
+                fb.getAllListNames(fbNameListCallbackObj)
+                listNameAdapter.notifyItemRangeChanged(0, listNames.size)
+            }
+        }
+        mDialogView.findViewById<Button>(R.id.confirm_button).setOnClickListener {
+            mAlertDialog.dismiss()
+            val listName = mDialogView.findViewById<TextInputEditText>(R.id.name_input).text.toString() //set the input text in TextView mainInfoTv.setText("Name:"+ name +"\nEmail: "+ email +"\nPassword: "+ password)
+            fb.addNewGameList(listName, callbackObj)
+        }
+
+        mDialogView.findViewById<Button>(R.id.cancel_button).setOnClickListener {
+            mAlertDialog.dismiss()
+        }
+
+    }
+
     override fun onItemClick(listName: String) {
-        Log.d("Name", listName)
         sendDataBack(listName)
     }
 
