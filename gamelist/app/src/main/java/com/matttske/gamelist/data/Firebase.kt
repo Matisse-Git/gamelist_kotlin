@@ -43,6 +43,16 @@ class Firebase {
                 .addOnFailureListener { e -> Log.w("Firestore", "Error writing document", e) }
     }
 
+    fun deleteDocumentInGames(documentName: String, callback: writeCallback){
+        db.collection("Users/${User.id()}/games")
+                .document(documentName)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("Firestore", "Document $documentName successfully deleted!")
+                    callback.onSuccess()
+                }
+    }
+
 
     fun addNewGameList(listName: String, callback: writeCallback, initGames: List<Int> = ArrayList()){
         val newList = hashMapOf(
@@ -50,7 +60,7 @@ class Firebase {
         )
 
         db.collection("Users/${User.id()}/games")
-                .document(listName)
+                .document(listName.toLowerCase(Locale.ROOT))
                 .set(newList)
                 .addOnSuccessListener {
                     Log.d("Firestore", "Game List with name $listName successfully written!")

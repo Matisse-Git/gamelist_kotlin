@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,7 @@ import com.matttske.gamelist.data.SingleReturnValueCallBack
 class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnItemCLickListener {
 
     private val fb = Firebase()
+    private var deleteMode = false
 
     private val listNames = ArrayList<Pair<String, Int>>()
     private lateinit var listNameAdapter: ListNameFIlterAdapter
@@ -28,8 +30,9 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
         override fun onSuccess(newListNames: List<Pair<String, Int>>) {
             Log.d("Firestore", newListNames.toString())
             listNames.clear()
+            listNameAdapter.notifyDataSetChanged()
             listNames.addAll(newListNames)
-            listNameAdapter.notifyItemRangeInserted(0, newListNames.size)
+            listNameAdapter.notifyItemRangeChanged(0, newListNames.size)
         }
     }
 
@@ -53,6 +56,10 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
         val addListButton = findViewById<Button>(R.id.add_list_button)
         addListButton.setOnClickListener {
             addNewList()
+        }
+        val deleteListButton = findViewById<Button>(R.id.delete_list_button)
+        deleteListButton.setOnClickListener{
+            deleteMode = !deleteMode
         }
     }
 
@@ -88,8 +95,34 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
 
     }
 
+
+
     override fun onItemClick(listName: String) {
-        sendDataBack(listName)
+        if (!deleteMode)
+            sendDataBack(listName)
+        else{
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Warning")
+            alertDialogBuilder.setMessage("By deleting this list, you are also deleting all the games that are inside of it. Are you sure you want to continue?")
+            alertDialogBuilder.setCancelable(true)
+            alertDialogBuilder.setNegativeButton("Cancel") {
+                dialog, which -> dialog.dismiss()
+            }
+            alertDialogBuilder.setPositiveButton("Confirm") {
+                dialog, which ->
+                    dialog.dismiss()
+                    val callbackObj = object : Firebase.writeCallback {
+                        override fun onSuccess() {
+                            fb.getAllListNames(fbNameListCallbackObj)
+                            listNameAdapter.notifyItemRangeChanged(0, listNames.size)
+                        }
+                    }
+                    fb.deleteDocumentInGames(listName, callbackObj)
+                    Toast.makeText(applicationContext, "$listName was successfully deleted!", Toast.LENGTH_SHORT).show()
+            }
+
+            alertDialogBuilder.show()
+        }
     }
 
 
