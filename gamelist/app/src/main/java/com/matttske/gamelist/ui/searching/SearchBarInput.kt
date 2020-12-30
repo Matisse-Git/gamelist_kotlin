@@ -1,4 +1,4 @@
-package com.matttske.gamelist.ui
+package com.matttske.gamelist.ui.searching
 
 import android.view.View
 

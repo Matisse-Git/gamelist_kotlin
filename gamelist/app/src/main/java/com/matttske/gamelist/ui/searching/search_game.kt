@@ -1,31 +1,24 @@
 package com.matttske.gamelist.ui.searching
 
 import android.content.Intent
-import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.matttske.gamelist.MainActivity
 import com.matttske.gamelist.R
 import com.matttske.gamelist.data.API
 import com.matttske.gamelist.data.Game
 import com.matttske.gamelist.data.GameRecycleAdapter
 import com.matttske.gamelist.data.ReturnValueCallBack
-import com.matttske.gamelist.ui.SearchBarInput
 import com.matttske.gamelist.ui.gameDetails.GameDetailed
-import org.w3c.dom.Text
 
 class search_game : AppCompatActivity(), GameRecycleAdapter.OnItemCLickListener, SearchBarInput {
 

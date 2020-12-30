@@ -8,14 +8,9 @@ import kotlin.collections.ArrayList
 
 class Firebase {
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var callback: firebaseCallback
-    private val idList = ArrayList<Int>()
 
-    fun setCallBack(newCallback: firebaseCallback){
-        this.callback = newCallback
-    }
-
-    fun getDocumentInGames(documentName: String){
+    fun getDocumentInGames(documentName: String, callback: firebaseCallback){
+        val idList = ArrayList<Int>()
         db.collection("Users/${User.id()}/games")
                 .document(documentName.toLowerCase(Locale.ROOT))
                 .get()
@@ -26,6 +21,7 @@ class Firebase {
                             val newId = id.toString()
                             idList.add(newId.toInt())
                         }
+                        Log.d("FB List", idList.size.toString())
                         callback.onSuccess(idList)
                     }
 
@@ -44,9 +40,30 @@ class Firebase {
                 .addOnSuccessListener {
                     Log.d("Firestore", "DocumentSnapshot successfully written!")
                 }
-                .addOnFailureListener { e -> Log.w("Firestore", "Error writing document", e) }    }
+                .addOnFailureListener { e -> Log.w("Firestore", "Error writing document", e) }
+    }
+
+    fun getAllListNames(callback: firebaseListNameCallback){
+        db.collection("Users/${User.id()}/games")
+                .get()
+                .addOnSuccessListener { result ->
+                    val listNames = ArrayList<Pair<String, Int>>()
+                    for (document in result) {
+                        val listCount = document.get("game_ids") as List<*>
+                        listNames.add(Pair(document.id, listCount.size))
+                    }
+                    callback.onSuccess(listNames)
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("Firestore", "Error getting documents.", exception)
+                }
+    }
 
     interface firebaseCallback{
         fun onSuccess(idList: List<Int>)
+    }
+
+    interface firebaseListNameCallback{
+        fun onSuccess(listNames: List<Pair<String, Int>>)
     }
 }

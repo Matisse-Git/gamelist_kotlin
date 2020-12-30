@@ -1,5 +1,6 @@
 package com.matttske.gamelist.ui.dashboard
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -19,13 +20,12 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.common.primitives.UnsignedBytes.toInt
-import com.google.firebase.firestore.FirebaseFirestore
 import com.matttske.gamelist.MainActivity
 import com.matttske.gamelist.R
 import com.matttske.gamelist.data.*
-import com.matttske.gamelist.ui.SearchBarInput
+import com.matttske.gamelist.ui.searching.SearchBarInput
 import com.matttske.gamelist.ui.gameDetails.GameDetailed
+import com.matttske.gamelist.ui.gameDetails.ListNamesFilterActivity
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -54,7 +54,11 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
     }
     private val fbCallbackObj = object : Firebase.firebaseCallback {
         override fun onSuccess(newIdList: List<Int>) {
+            idList.clear()
             idList.addAll(newIdList)
+            gameList.clear()
+            Log.d("New List", newIdList.size.toString())
+            Log.d("List", idList.size.toString())
             for (id in idList){
                 api.getGameById(callbackObj, id)
             }
@@ -77,7 +81,6 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
 
     private var currentListName = "playing"
 
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -89,8 +92,7 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
 
         findViews(root)
 
-        fb.setCallBack(fbCallbackObj)
-        fb.getDocumentInGames(currentListName)
+        fb.getDocumentInGames(currentListName, fbCallbackObj)
 
         return root
     }
@@ -108,16 +110,12 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
 
         if (newGameList.size == idList.size){
             gameList.clear()
-            var counter = -1
-            for (g in newGameList){
-                counter++
-                gameList.add(counter, g)
-                adapter.notifyItemInserted(counter)
-            }
+            gameList.addAll(newGameList)
+            adapter.notifyDataSetChanged()
         }
     }
 
-    fun updateFirestoreList(){
+    private fun updateFirestoreList(){
         fb.updateDocumentInGames(currentListName, idList)
     }
 
@@ -129,7 +127,7 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
         }
         filterListNameButton = root.findViewById(R.id.filter_list_name_button)
         filterListNameButton.setOnClickListener{
-            showDialog()
+            startFilterActivity(1)
         }
         //searchInput = root.findViewById(R.id.search_input)
 
@@ -144,17 +142,22 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
         touchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun showDialog() {
-        val dialog = Dialog(parentFragment?.activity as MainActivity)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.dialog_filter_list_name)
-
-        val cancelButton = dialog.findViewById<Button>(R.id.cancel_button)
-        cancelButton.setOnClickListener { dialog.dismiss() }
-        dialog.show()
-
+    private fun startFilterActivity(requestCode: Int) {
+        val intent = Intent(activity, ListNamesFilterActivity::class.java)
+        startActivityForResult(intent, requestCode)
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1){
+            if (resultCode == Activity.RESULT_OK){
+                currentListName = data?.getStringExtra("result").toString()
+                fb.getDocumentInGames(currentListName, fbCallbackObj)
+            }
+        }
+    }
+
 
     override fun backPressed(view: View){}
 
@@ -169,6 +172,5 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(parentFragment?.activity as MainActivity, gameTitle, ViewCompat.getTransitionName(gameTitle)!!)
         startActivity(intent, options.toBundle())
     }
-
 
 }
