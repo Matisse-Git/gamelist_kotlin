@@ -10,10 +10,15 @@ class Game(
     var tba: Boolean,
     var background_image: String,
     var rating: String,
-    var metacritic: String
-): Serializable  {
+    var metacritic: String,
+    var dominant_color: String,
+    var genres: Array<Genre>
+): Serializable{}
 
-}
+class Genre(
+    var id: Int,
+    var name: String
+): Serializable{}
 
 /*
 "id": 0,

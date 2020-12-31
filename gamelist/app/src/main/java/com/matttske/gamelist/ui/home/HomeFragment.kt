@@ -1,21 +1,17 @@
 package com.matttske.gamelist.ui.home
 
-import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -28,6 +24,7 @@ import com.matttske.gamelist.data.ReturnValueCallBack
 import com.matttske.gamelist.ui.gameDetails.GameDetailed
 import com.matttske.gamelist.ui.searching.search_game
 import kotlin.random.Random
+
 
 class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
 
@@ -100,10 +97,10 @@ class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
         })
     }
 
-    private fun insertItem(view: View) {
+    /*private fun insertItem(view: View) {
         val index = Random.nextInt(8)
 
-        val newGame = Game(2, "new", "new", "new", true, "new", "new", "new")
+        val newGame = Game(2, "new", "new", "new", true, "new", "new", "new", "0f0f0f")
 
         gameList.add(index, newGame)
         adapter.notifyItemInserted(index)
@@ -114,7 +111,7 @@ class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
 
         gameList.removeAt(index)
         adapter.notifyItemRemoved(index)
-    }
+    }*/
 
     private fun getGameList() {
         val callbackObj = object : ReturnValueCallBack {
