@@ -6,7 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,8 +24,11 @@ import com.matttske.gamelist.data.SingleReturnValueCallBack
 class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnItemCLickListener {
 
     private val fb = Firebase()
-    private var deleteMode = false
 
+    private var deleteMode = false
+    private lateinit var deleteNotice: TextView
+
+    private val defaultLists = arrayListOf<String>("playing", "completed", "paused", "dropped", "backlog", "wishlist")
     private val listNames = ArrayList<Pair<String, Int>>()
     private lateinit var listNameAdapter: ListNameFIlterAdapter
     private val fbNameListCallbackObj = object : Firebase.firebaseListNameCallback {
@@ -53,6 +58,9 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
         listNameRecyclerView.layoutManager = LinearLayoutManager(this)
         listNameRecyclerView.setHasFixedSize(true)
 
+        deleteNotice = findViewById(R.id.delete_notice_text)
+        deleteNotice.visibility = View.GONE
+
         val addListButton = findViewById<Button>(R.id.add_list_button)
         addListButton.setOnClickListener {
             addNewList()
@@ -60,6 +68,12 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
         val deleteListButton = findViewById<Button>(R.id.delete_list_button)
         deleteListButton.setOnClickListener{
             deleteMode = !deleteMode
+            if (deleteMode){
+                deleteNotice.visibility = View.VISIBLE
+            }
+            else{
+                deleteNotice.visibility = View.GONE
+            }
         }
     }
 
@@ -101,27 +115,32 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
         if (!deleteMode)
             sendDataBack(listName)
         else{
-            val alertDialogBuilder = AlertDialog.Builder(this)
-            alertDialogBuilder.setTitle("Warning")
-            alertDialogBuilder.setMessage("By deleting this list, you are also deleting all the games that are inside of it. Are you sure you want to continue?")
-            alertDialogBuilder.setCancelable(true)
-            alertDialogBuilder.setNegativeButton("Cancel") {
-                dialog, which -> dialog.dismiss()
+            if (defaultLists.contains(listName)){
+                Toast.makeText(applicationContext, "$listName is a default list and cannot be deleted.", Toast.LENGTH_LONG).show()
             }
-            alertDialogBuilder.setPositiveButton("Confirm") {
-                dialog, which ->
-                    dialog.dismiss()
-                    val callbackObj = object : Firebase.writeCallback {
-                        override fun onSuccess() {
-                            fb.getAllListNames(fbNameListCallbackObj)
-                            listNameAdapter.notifyItemRangeChanged(0, listNames.size)
+            else{
+                val alertDialogBuilder = AlertDialog.Builder(this)
+                alertDialogBuilder.setTitle("Warning")
+                alertDialogBuilder.setMessage("By deleting this list, you are also deleting all the games that are inside of it. Are you sure you want to continue?")
+                alertDialogBuilder.setCancelable(true)
+                alertDialogBuilder.setNegativeButton("Cancel") {
+                    dialog, which -> dialog.dismiss()
+                }
+                alertDialogBuilder.setPositiveButton("Confirm") {
+                    dialog, which ->
+                        dialog.dismiss()
+                        val callbackObj = object : Firebase.writeCallback {
+                            override fun onSuccess() {
+                                fb.getAllListNames(fbNameListCallbackObj)
+                                listNameAdapter.notifyItemRangeChanged(0, listNames.size)
+                            }
                         }
-                    }
-                    fb.deleteDocumentInGames(listName, callbackObj)
-                    Toast.makeText(applicationContext, "$listName was successfully deleted!", Toast.LENGTH_SHORT).show()
-            }
+                        fb.deleteDocumentInGames(listName, callbackObj)
+                        Toast.makeText(applicationContext, "$listName was successfully deleted!", Toast.LENGTH_SHORT).show()
+                }
 
-            alertDialogBuilder.show()
+                alertDialogBuilder.show()
+            }
         }
     }
 
