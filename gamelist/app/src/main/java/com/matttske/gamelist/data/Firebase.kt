@@ -33,7 +33,7 @@ class Firebase {
                 }
         }
 
-        fun updateDocumentInGames(documentName: String, updatedIdList: List<Int>) {
+        fun updateDocumentInGames(documentName: String, updatedIdList: List<Int>, callback: firebaseListsCachedCallback) {
 
             val newList = hashMapOf(
                 "game_ids" to updatedIdList
@@ -44,6 +44,7 @@ class Firebase {
                 .set(newList)
                 .addOnSuccessListener {
                     Log.d("Firestore", "DocumentSnapshot successfully written!")
+                    callback.onSuccess()
                 }
                 .addOnFailureListener { e -> Log.w("Firestore", "Error writing document", e) }
         }

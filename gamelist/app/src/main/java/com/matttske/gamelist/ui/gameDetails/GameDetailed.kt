@@ -46,6 +46,7 @@ class GameDetailed : AppCompatActivity() {
         val callback = object : SingleReturnValueCallBack {
             override fun onSuccess(value: Game) {
                 currentGame = value
+                disableLoadingScreen()
                 setViews()
             }
         }
@@ -68,29 +69,45 @@ class GameDetailed : AppCompatActivity() {
         api.getScreenshotsOfGame(screenshotsCallBack, gameId)
     }
 
+
     private fun findListName(id: Int){
-        val fbcallback = object: Firebase.firebaseSearchListCallback{
-            override fun onSuccess(listName: String) {
-                if (listName != ""){
-                    gameStatus = listName
-                    val gameListButton = findViewById<MaterialButton>(R.id.list_button)
-                    gameListButton.visibility = View.GONE
-                    val addedGameListButton = findViewById<MaterialButton>(R.id.added_list_button)
-                    addedGameListButton.text = gameStatus
-                    addedGameListButton.setOnClickListener {
-                        startFilterActivity(1)
-                    }
+        if (fb.getCachedLists().isEmpty()){
+            Log.d("Game List", "Cached Firebase Lists Are Empty.")
+            fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
+                override fun onSuccess() {
+                    refreshGameStatus(id)
                 }
-                else{
-                    val gameListButton = findViewById<MaterialButton>(R.id.list_button)
-                    gameListButton.setOnClickListener {
-                        startFilterActivity(1)
-                    }
-                }
-                disableLoadingScreen()
+            })
+        }
+        else{
+            Log.d("Game List", "List was added using cached firebase list.")
+            refreshGameStatus(id)
+        }
+    }
+
+    private fun refreshGameStatus(id: Int){
+        var gameFound = false
+        fb.getCachedLists().forEach {
+            if (it.second.contains(id.toLong())){
+                gameFound = true
+                gameStatus = it.first
             }
         }
-        fb.searchGameInDocuments(fbcallback, gameId)
+        if (gameFound){
+            val gameListButton = findViewById<MaterialButton>(R.id.list_button)
+            gameListButton.visibility = View.GONE
+            val addedGameListButton = findViewById<MaterialButton>(R.id.added_list_button)
+            addedGameListButton.text = gameStatus
+            addedGameListButton.setOnClickListener {
+                startFilterActivity(1)
+            }
+        }
+        else{
+            val gameListButton = findViewById<MaterialButton>(R.id.list_button)
+            gameListButton.setOnClickListener {
+                startFilterActivity(1)
+            }
+        }
     }
 
     private fun disableLoadingScreen(){
@@ -130,21 +147,30 @@ class GameDetailed : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK){
                 val listName = data?.getStringExtra("result").toString()
                 addGameToList(listName)
-                Toast.makeText(applicationContext, "${currentGame.name} was added to $listName!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun addGameToList(listName: String){
-        val idList = ArrayList<Int>()
-        val fbCallbackObj = object : Firebase.firebaseCallback {
-            override fun onSuccess(newIdList: List<Int>) {
-                idList.addAll(newIdList)
-                idList.add(currentGame.id)
-                fb.updateDocumentInGames(listName, idList)
+        val idList: ArrayList<Int> = arrayListOf()
+        fb.getCachedLists().forEach {
+            if (it.first == listName){
+                it.second.forEach {
+                    idList.add(it.toInt())
+                }
             }
         }
+        idList.add(currentGame.id)
+        fb.updateDocumentInGames(listName, idList, object: Firebase.firebaseListsCachedCallback{
+            override fun onSuccess() {
+                fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
+                    override fun onSuccess() {
+                        refreshGameStatus(currentGame.id)
+                    }
+                })
+                Toast.makeText(applicationContext, "${currentGame.name} was added to $listName!", Toast.LENGTH_SHORT).show()
+            }
+        })
 
-        fb.getDocumentInGames(listName, fbCallbackObj)
     }
 }

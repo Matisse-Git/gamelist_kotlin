@@ -145,8 +145,11 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
     }
 
     private fun updateFirestoreList(){
-        Toast.makeText(activity?.applicationContext, "Your list has been saved!", Toast.LENGTH_SHORT).show()
-        fb.updateDocumentInGames(currentListName, idList)
+        fb.updateDocumentInGames(currentListName, idList, object: Firebase.firebaseListsCachedCallback{
+            override fun onSuccess() {
+                Toast.makeText(activity?.applicationContext, "Your list has been saved!", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun findViews(root: View) {
@@ -183,7 +186,7 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
         if (requestCode == 1){
             if (resultCode == Activity.RESULT_OK){
                 currentListName = data?.getStringExtra("result").toString()
-                fb.getDocumentInGames(currentListName, fbCallbackObj)
+                refreshIdList()
             }
         }
     }
