@@ -2,54 +2,74 @@ package com.matttske.gamelist.data
 
 import java.io.Serializable
 
-class Game(
-    var id: Int,
-    var slug: String,
-    var name: String,
-    var released: String,
-    var tba: Boolean,
-    var background_image: String,
-    var rating: String,
-    var metacritic: String
-): Serializable  {
+//GAME CLASS BEGIN
+data class Game(
+        var id: Int,
+        var slug: String,
+        var name: String,
+        var released: String,
+        var tba: Boolean,
+        var background_image: String,
+        var background_image_additional: String,
+        var rating: String,
+        var metacritic: String,
+        var dominant_color: String,
+        var genres: Array<Genre>,
+        var esrb_rating: EsrbRating,
+        var clip: Clip
+        //var added_by_status: AddedByStatus
+): Serializable
 
-}
+data class Genre(
+        var id: Int,
+        var name: String
+): Serializable
 
-/*
-"id": 0,
-"slug": "string",
-"name": "string",
-"released": "2020-12-18",
-"tba": true,
-"background_image": "http://example.com",
-"rating": 0,
-"rating_top": 0,
-"ratings": { },
-"ratings_count": 0,
-"reviews_text_count": "string",
-"added": 0,
-"added_by_status": { },
-"metacritic": 0,
-"playtime": 0,
-"suggestions_count": 0,
-"updated": "2020-12-18T22:08:42Z",
-"esrb_rating": {
-"id": 0,
-"slug": "everyone",
-"name": "Everyone"
-},
-"platforms": [
-{
-"platform": {
-"id": 0,
-"slug": "string",
-"name": "string"
-},
-"released_at": "string",
-"requirements": {
-"minimum": "string",
-"recommended": "string"
-}
-}
-]
-*/
+data class EsrbRating(
+        var id: Int,
+        var name: String,
+        var slug: String
+): Serializable
+
+data class AddedByStatus(
+        var yet: Int,
+        var owned: Int,
+        var beaten: Int,
+        var toplay: Int,
+        var dropped: Int,
+        var playing: Int
+): Serializable
+
+data class Clip(
+        var clip: String
+): Serializable
+
+data class Clips(
+        //var 320: String,
+        //var 640: String,
+        var full: String
+): Serializable
+//GAME CLASS END
+
+
+//MOVIE CLASS BEGIN
+data class Movie(
+        var id: Int,
+        var preview: String,
+        var data: MovieData
+): Serializable
+
+data class MovieData(
+        var max: String
+): Serializable
+//MOVIE CLASS END
+
+
+//SCREENSHOT CLASS START
+data class Screenshot(
+        var id: Int,
+        var image: String,
+        var width: Int,
+        var height: Int
+): Serializable
+//SCREENSHOT CLASS END

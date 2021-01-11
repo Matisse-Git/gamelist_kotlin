@@ -1,19 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.gameDetails.GameDetailed">
 
-    <TextView
-        android:id="@+id/game_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:transitionName="game_title"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <ScrollView
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="-10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/game_background"
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:scaleType="centerCrop"
+                android:foreground="@drawable/gradient_top"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/list_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:layout_marginHorizontal="40dp"
+                android:layout_below="@id/game_icon_container"
+                style="@style/Widget.MaterialComponents.Button"
+                android:text="Add To List"
+                android:textColor="@color/black"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/added_list_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:layout_marginHorizontal="40dp"
+                android:layout_below="@id/game_icon_container"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="?colorPrimary"
+                android:textColor="@color/white"
+                />
+
+            <RelativeLayout
+                android:id="@+id/game_icon_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="50dp"
+                >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="135dp"
+                    android:layout_height="135dp"
+                    android:layout_centerInParent="true"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@color/white"
+                    android:src="@drawable/clear_input_black"
+                    android:tint="@color/Transparent"
+                    />
+
+                <ImageView
+                    android:id="@+id/game_icon"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+
+
+
+
+            <TextView
+                android:id="@+id/game_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/game_icon_container"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="70dp"
+                android:layout_marginHorizontal="24dp"
+                android:text="Game Title"
+                android:fontFamily="@font/lato_bold"
+                android:textSize="18sp"
+                android:textColor="@color/white"/>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/loading_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSecondary"
+        >
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -31,6 +31,19 @@
                 android:padding="12dp"
                 android:onClick="backPressed"/>
 
+            <TextView
+                android:id="@+id/placeholder_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/search_back_button"
+                android:layout_toStartOf="@id/clear_input_button"
+                android:gravity="center_vertical"
+                android:paddingLeft="4dp"
+                android:text="Search..."
+                android:textSize="9pt"
+                android:textColor="@color/light_grey"/>
+
+
             <EditText
                 android:id="@+id/search_input"
                 android:layout_width="match_parent"
@@ -49,7 +62,8 @@
                 android:tint="@color/black"
                 android:layout_centerVertical="true"
                 android:src="@drawable/clear_input_black"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:onClick="clearInput"/>
 
 
 
@@ -64,6 +78,27 @@
         android:layout_height="match_parent"
         android:layout_marginTop="12dp"
         tools:listitem="@layout/game_item"/>
+
+    <ImageView
+        android:id="@+id/no_items_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/search_container"
+        android:layout_centerInParent="true"
+        android:src="@drawable/snes_controller"
+        android:layout_marginTop="200dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/no_items_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/no_items_image"
+        android:layout_centerInParent="true"
+        android:text="No Items Found..."
+        android:textColor="?attr/colorPrimary"
+        android:textSize="20dp"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

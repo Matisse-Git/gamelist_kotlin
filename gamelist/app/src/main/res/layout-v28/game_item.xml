@@ -12,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="12dp"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardBackgroundColor="@color/Transparent"
-        app:cardElevation="4dp"
-        android:clickable="true"
+        app:cardBackgroundColor="?colorSecondary"
+        android:outlineAmbientShadowColor="@color/Transparent"
+        android:outlineSpotShadowColor="@color/Transparent"
+        android:foreground="?selectableItemBackground"
         >
 
         <RelativeLayout
@@ -36,6 +36,7 @@
                     app:civ_border_width="2dp"
                     app:civ_border_color="@color/white"
                     android:src="@drawable/clear_input_black"
+                    android:tint="@color/Transparent"
                     />
 
                 <ImageView
@@ -65,6 +66,17 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:transitionName="game_title" />
+
+                <TextView
+                    android:id="@+id/game_genres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/title_text"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato"
+                    android:text="ACtion, Adventure"
+                    android:textColor="?colorOnPrimary"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/release_text"
@@ -122,17 +134,24 @@
 
             </RelativeLayout>
 
+            <ImageView
+                android:id="@+id/detail_arrow"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/detail_arrow_black"
+                android:tint="?colorOnPrimary"/>
+
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true"
-        app:cardMaxElevation="6dp"
+    <RelativeLayout
+        android:layout_below="@id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="12dp">
-    </androidx.cardview.widget.CardView>
+        android:layout_height="4dp"
+        android:background="@color/light_grey"/>
 
 </RelativeLayout>

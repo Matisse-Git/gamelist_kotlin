@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.gameDetails.ListNamesFilterActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="24dp"
+        android:layout_above="@+id/delete_notice_text"
+        tools:listitem="@layout/list_name_item"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/add_list_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/Transparent"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="12dp"
+        android:layout_alignParentEnd="true"
+        android:text="Add New List +"/>
+
+    <Button
+        android:id="@+id/delete_list_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/Transparent"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="12dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/add_list_button"
+        android:text="Delete A List"/>
+
+    <TextView
+        android:id="@+id/delete_notice_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="24dp"
+        android:textColor="@color/red"
+        android:text="Tap on a list to delete it."/>
+
+
+</RelativeLayout>
