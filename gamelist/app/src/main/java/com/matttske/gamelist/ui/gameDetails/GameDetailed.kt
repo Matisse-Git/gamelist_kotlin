@@ -1,9 +1,13 @@
 package com.matttske.gamelist.ui.gameDetails
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -111,13 +115,16 @@ class GameDetailed : AppCompatActivity() {
     }
 
     private fun disableLoadingScreen(){
-        val loadingScreen = findViewById<RelativeLayout>(R.id.loading_screen)
-        loadingScreen.visibility = View.GONE
+        crossfade()
+        animateViewUp()
     }
 
     private fun setViews(){
             gameTitle = findViewById(R.id.game_title)
             gameTitle.text = currentGame.name
+
+            val gameDesc = findViewById<TextView>(R.id.game_description)
+            gameDesc.text = Html.fromHtml(currentGame.description)
 
             val gameBackground = findViewById<ImageView>(R.id.game_background)
             Glide.with(this)
@@ -172,5 +179,43 @@ class GameDetailed : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun animateViewUp(){
+        val mainView = findViewById<ScrollView>(R.id.main_content)
+        ObjectAnimator.ofFloat(mainView, "translationY", 70f).apply {
+            duration = resources.getInteger(android.R.integer.config_longAnimTime).toLong()
+            start()
+        }
+    }
+
+    private fun crossfade() {
+        val shortAnimationDuration: Int = resources.getInteger(android.R.integer.config_longAnimTime)
+        val mainView = findViewById<ScrollView>(R.id.main_content)
+        mainView.apply {
+            // Set the content view to 0% opacity but visible, so that it is visible
+            // (but fully transparent) during the animation.
+            alpha = 0f
+            visibility = View.VISIBLE
+
+            // Animate the content view to 100% opacity, and clear any animation
+            // listener set on the view.
+            animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration.toLong())
+                .setListener(null)
+        }
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        val loadingScreen = findViewById<RelativeLayout>(R.id.loading_screen)
+        loadingScreen.animate()
+            .alpha(0f)
+            .setDuration(shortAnimationDuration.toLong())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    loadingScreen.visibility = View.GONE
+                }
+            })
     }
 }

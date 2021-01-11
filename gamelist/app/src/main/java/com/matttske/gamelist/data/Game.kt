@@ -13,12 +13,25 @@ data class Game(
         var background_image_additional: String,
         var rating: String,
         var metacritic: String,
+        var metacritic_url: String,
         var dominant_color: String,
         var genres: Array<Genre>,
         var esrb_rating: EsrbRating,
-        var clip: Clip
+        var clip: Clip,
+        var description: String,
+        var description_raw: String,
+        var platforms: Array<Platform>
+
         //var added_by_status: AddedByStatus
 ): Serializable
+
+data class Platform(
+        var id: Int,
+        var name: String,
+        var slug: String,
+        var games_count: Int,
+        var image_background: String
+)
 
 data class Genre(
         var id: Int,

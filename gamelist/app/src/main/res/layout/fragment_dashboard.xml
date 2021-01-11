@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.DashboardFragment">
 
+    <RelativeLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filter_list_name_button"
         android:layout_width="wrap_content"
@@ -53,4 +58,12 @@
         android:textColor="?attr/colorPrimary"
         android:textSize="20dp"
         android:visibility="gone"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+    android:id="@+id/loading_screen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?colorSecondary"/>
+
 </RelativeLayout>

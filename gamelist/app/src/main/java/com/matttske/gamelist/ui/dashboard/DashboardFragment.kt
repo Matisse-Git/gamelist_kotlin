@@ -1,5 +1,7 @@
 package com.matttske.gamelist.ui.dashboard
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
@@ -9,10 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -88,6 +87,8 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
     private var cachedFbLists: List<Pair<String, List<Long>>> = listOf()
     private var currentListName = "playing"
 
+    private lateinit var rootView: View
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -97,6 +98,7 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
                 ViewModelProvider(this).get(DashboardViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
+        rootView = root
         findViews(root)
 
         if (fb.getCachedLists().isEmpty()){
@@ -141,7 +143,9 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
             gameList.clear()
             gameList.addAll(newGameList)
             adapter.notifyDataSetChanged()
+            crossfade(rootView)
         }
+
     }
 
     private fun updateFirestoreList(){
@@ -204,5 +208,36 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
 
         startActivity(intent)
     }
+
+    private fun crossfade(root: View) {
+        val shortAnimationDuration: Int = resources.getInteger(android.R.integer.config_longAnimTime)
+        val mainView = root.findViewById<RelativeLayout>(R.id.main_content)
+        mainView.apply {
+            // Set the content view to 0% opacity but visible, so that it is visible
+            // (but fully transparent) during the animation.
+            alpha = 0f
+            visibility = View.VISIBLE
+
+            // Animate the content view to 100% opacity, and clear any animation
+            // listener set on the view.
+            animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration.toLong())
+                .setListener(null)
+        }
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        val loadingScreen = root.findViewById<RelativeLayout>(R.id.loading_screen)
+        loadingScreen.animate()
+            .alpha(0f)
+            .setDuration(shortAnimationDuration.toLong())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    loadingScreen.visibility = View.GONE
+                }
+            })
+    }
+
 
 }

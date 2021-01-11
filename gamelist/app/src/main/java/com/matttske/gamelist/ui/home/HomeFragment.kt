@@ -132,7 +132,7 @@ class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
         val intent = Intent(context, GameDetailed::class.java)
         intent.putExtra("Game", id)
 
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(parentFragment?.activity as MainActivity, gameTitle, ViewCompat.getTransitionName(gameTitle)!!)
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(parentFragment?.activity as MainActivity)
         startActivity(intent)
     }
 }

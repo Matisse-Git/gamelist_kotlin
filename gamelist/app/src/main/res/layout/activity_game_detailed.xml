@@ -13,6 +13,7 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="-30dp"
         android:layout_marginBottom="-10dp">
 
         <RelativeLayout
@@ -90,9 +91,53 @@
                 android:layout_marginTop="70dp"
                 android:layout_marginHorizontal="24dp"
                 android:text="Game Title"
-                android:fontFamily="@font/lato_bold"
+                android:fontFamily="@font/lato_black"
                 android:textSize="18sp"
-                android:textColor="@color/white"/>
+                android:textColor="?colorOnPrimary"/>
+
+            <TextView
+                android:id="@+id/description_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/game_background"
+                android:layout_marginTop="26dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginHorizontal="24dp"
+                android:fontFamily="@font/lato_bold"
+                android:textSize="14sp"
+                android:text="Description"
+                android:textColor="?colorOnPrimary"
+                />
+
+            <TextView
+                android:id="@+id/game_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/description_title"
+                android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="24dp"
+                android:fontFamily="@font/lato"
+                android:textColor="?colorOnPrimary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/screenshots_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/game_background"
+                android:layout_marginTop="26dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginHorizontal="24dp"
+                android:fontFamily="@font/lato_bold"
+                android:textSize="14sp"
+                android:text="Screenshots"
+                android:textColor="?colorOnPrimary"
+                />
+
+            <HorizontalScrollView
+                android:id="@+id/screenshots_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
 
         </RelativeLayout>
