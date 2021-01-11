@@ -7,8 +7,11 @@ import kotlin.collections.ArrayList
 
 
 class Firebase {
+
     private val db = FirebaseFirestore.getInstance()
     private val gamePath = "Users/${User.id()}/games"
+
+    private var allLists: ArrayList<Pair<String, List<*>>> = arrayListOf()
 
     fun getDocumentInGames(documentName: String, callback: firebaseCallback){
         val idList = ArrayList<Int>()
@@ -85,6 +88,29 @@ class Firebase {
                 }
     }
 
+    fun getAllLists(callback: firebaseListsCachedCallback){
+        db.collection(gamePath)
+                .get()
+                .addOnSuccessListener{ result ->
+                    FirebaseCache.cachedList().clear()
+                    for (document in result){
+                        val gameIds = document.get("game_ids") as List<Long>
+                        Log.d("Game List", Pair(document.id, gameIds).toString())
+                        FirebaseCache.cachedList().add(Pair(document.id, gameIds))
+                        Log.d("Game List", FirebaseCache.cachedList().toString())
+                        callback.onSuccess()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("Firestore", "Error getting documents.", exception)
+                }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getCachedLists(): List<Pair<String, List<Long>>>{
+        return FirebaseCache.cachedList() as List<Pair<String, List<Long>>>
+    }
+
     fun searchGameInDocuments(callback: firebaseSearchListCallback, id: Int){
         db.collection(gamePath)
                 .whereArrayContains("game_ids", id)
@@ -113,7 +139,17 @@ class Firebase {
         fun onSuccess(listName: String)
     }
 
+    interface firebaseListsCachedCallback{
+        fun onSuccess()
+    }
+
     interface writeCallback{
         fun onSuccess()
+    }
+}
+
+class FirebaseCache{
+    companion object {
+        fun cachedList(): ArrayList<Pair<String, List<Long>>> = arrayListOf()
     }
 }

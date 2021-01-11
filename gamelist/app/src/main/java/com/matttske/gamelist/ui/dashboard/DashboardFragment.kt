@@ -65,6 +65,24 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
             }
         }
     }
+    private val fbCachedCallback = object : Firebase.firebaseListsCachedCallback {
+        override fun onSuccess() {
+            //cachedFbLists = Firebase.cachedList()
+            cachedFbLists.forEach {
+                if (it.first == currentListName){
+                    idList.clear()
+                    val listToAdd = arrayListOf<Int>()
+                    it.second.forEach {
+                        listToAdd.add(it.toInt())
+                    }
+                    idList.addAll(listToAdd)
+                    for (id in idList){
+                        api.getGameById(callbackObj, id)
+                    }
+                }
+            }
+        }
+    }
     private val touchHelper = ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,0){
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
             val sourcePos = viewHolder.adapterPosition
@@ -80,6 +98,7 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
         }
     })
 
+    private var cachedFbLists: List<Pair<String, List<Long>>> = listOf()
     private var currentListName = "playing"
 
     override fun onCreateView(
@@ -93,7 +112,13 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
 
         findViews(root)
 
-        fb.getDocumentInGames(currentListName, fbCallbackObj)
+        if (FirebaseCache.cachedList().isEmpty()){
+            Log.d("Game List", "Cached Firebase Lists Are Empty.")
+            fb.getAllLists(fbCachedCallback)
+        }
+        else{
+            Log.d("Game List", "List was added using cached firebase list.")
+        }
 
         return root
     }
