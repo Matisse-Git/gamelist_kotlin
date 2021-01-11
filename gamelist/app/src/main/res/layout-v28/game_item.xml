@@ -36,6 +36,7 @@
                     app:civ_border_width="2dp"
                     app:civ_border_color="@color/white"
                     android:src="@drawable/clear_input_black"
+                    android:tint="@color/Transparent"
                     />
 
                 <ImageView
@@ -70,12 +71,12 @@
                     android:id="@+id/game_genres"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:layout_below="@id/title_text"
-                    android:fontFamily="@font/lato_thin"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato"
                     android:text="ACtion, Adventure"
                     android:textColor="?colorOnPrimary"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/release_text"
@@ -132,6 +133,16 @@
 
 
             </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/detail_arrow"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/detail_arrow_black"
+                android:tint="?colorOnPrimary"/>
 
         </RelativeLayout>
 

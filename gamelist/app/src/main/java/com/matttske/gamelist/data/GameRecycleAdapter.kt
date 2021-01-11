@@ -78,7 +78,7 @@ class GameRecycleAdapter(private val gameList: List<Game>, private val listener:
 
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION){
-                listener.onItemClick(gameList[adapterPosition], titleView)
+                listener.onItemClick(gameList[adapterPosition].id, titleView)
             }
         }
     }
@@ -88,6 +88,6 @@ class GameRecycleAdapter(private val gameList: List<Game>, private val listener:
     }
 
     interface OnItemCLickListener{
-        fun onItemClick(game: Game, gameTitle: TextView)
+        fun onItemClick(id: Int, gameTitle: TextView)
     }
 }

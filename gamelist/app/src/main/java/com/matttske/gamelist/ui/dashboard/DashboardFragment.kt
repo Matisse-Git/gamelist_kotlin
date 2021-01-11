@@ -167,12 +167,11 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
         //searchInput.text.clear()
     }
 
-    override fun onItemClick(game: Game, gameTitle: TextView) {
+    override fun onItemClick(id: Int, gameTitle: TextView) {
         val intent = Intent(context, GameDetailed::class.java)
-        intent.putExtra("Game", game)
+        intent.putExtra("Game", id)
 
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(parentFragment?.activity as MainActivity, gameTitle, ViewCompat.getTransitionName(gameTitle)!!)
-        startActivity(intent, options.toBundle())
+        startActivity(intent)
     }
 
 }

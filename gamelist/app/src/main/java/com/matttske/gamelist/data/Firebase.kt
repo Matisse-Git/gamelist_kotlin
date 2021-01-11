@@ -8,10 +8,11 @@ import kotlin.collections.ArrayList
 
 class Firebase {
     private val db = FirebaseFirestore.getInstance()
+    private val gamePath = "Users/${User.id()}/games"
 
     fun getDocumentInGames(documentName: String, callback: firebaseCallback){
         val idList = ArrayList<Int>()
-        db.collection("Users/${User.id()}/games")
+        db.collection(gamePath)
                 .document(documentName.toLowerCase(Locale.ROOT))
                 .get()
                 .addOnSuccessListener { document ->
@@ -34,7 +35,7 @@ class Firebase {
                 "game_ids" to updatedIdList
         )
 
-        db.collection("Users/${User.id()}/games")
+        db.collection(gamePath)
                 .document(documentName)
                 .set(newList)
                 .addOnSuccessListener {
@@ -44,7 +45,7 @@ class Firebase {
     }
 
     fun deleteDocumentInGames(documentName: String, callback: writeCallback){
-        db.collection("Users/${User.id()}/games")
+        db.collection(gamePath)
                 .document(documentName)
                 .delete()
                 .addOnSuccessListener {
@@ -59,7 +60,7 @@ class Firebase {
                 "game_ids" to initGames
         )
 
-        db.collection("Users/${User.id()}/games")
+        db.collection(gamePath)
                 .document(listName.toLowerCase(Locale.ROOT))
                 .set(newList)
                 .addOnSuccessListener {
@@ -69,7 +70,7 @@ class Firebase {
     }
 
     fun getAllListNames(callback: firebaseListNameCallback){
-        db.collection("Users/${User.id()}/games")
+        db.collection(gamePath)
                 .get()
                 .addOnSuccessListener { result ->
                     val listNames = ArrayList<Pair<String, Int>>()
@@ -84,12 +85,32 @@ class Firebase {
                 }
     }
 
+    fun searchGameInDocuments(callback: firebaseSearchListCallback, id: Int){
+        db.collection(gamePath)
+                .whereArrayContains("game_ids", id)
+                .get()
+                .addOnSuccessListener { result ->
+                    var listName = ""
+                    for(document in result){
+                        listName = document.id
+                    }
+                    callback.onSuccess(listName)
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("Firestore", "Error getting documents.", exception)
+                }
+    }
+
     interface firebaseCallback{
         fun onSuccess(idList: List<Int>)
     }
 
     interface firebaseListNameCallback{
         fun onSuccess(listNames: List<Pair<String, Int>>)
+    }
+
+    interface firebaseSearchListCallback{
+        fun onSuccess(listName: String)
     }
 
     interface writeCallback{
