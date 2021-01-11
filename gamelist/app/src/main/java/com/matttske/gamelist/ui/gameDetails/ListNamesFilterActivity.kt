@@ -23,7 +23,7 @@ import com.matttske.gamelist.data.SingleReturnValueCallBack
 
 class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnItemCLickListener {
 
-    private val fb = Firebase()
+    private val fb = Firebase.FirebaseCache
 
     private var deleteMode = false
     private lateinit var deleteNotice: TextView
@@ -47,7 +47,28 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
 
         findViews()
 
+        if (fb.getCachedLists().isEmpty()){
+            Log.d("Game List", "Cached Firebase Lists Are Empty.")
+            fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
+                override fun onSuccess() {
+                    refreshListNames()
+                }
+            })
+        }
+        else{
+            Log.d("Game List", "List was added using cached firebase list.")
+            refreshListNames()
+        }
+
         fb.getAllListNames(fbNameListCallbackObj)
+    }
+
+    private fun refreshListNames(){
+        listNames.clear()
+        fb.getCachedLists().forEach {
+            listNames.add(Pair(it.first, it.second.size))
+        }
+        listNameAdapter.notifyDataSetChanged()
     }
 
     private fun findViews() {

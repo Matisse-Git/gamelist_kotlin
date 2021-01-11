@@ -7,15 +7,16 @@ import kotlin.collections.ArrayList
 
 
 class Firebase {
+    companion object FirebaseCache{
 
-    private val db = FirebaseFirestore.getInstance()
-    private val gamePath = "Users/${User.id()}/games"
+        private val db = FirebaseFirestore.getInstance()
+        private val gamePath = "Users/${User.id()}/games"
 
-    private var allLists: ArrayList<Pair<String, List<*>>> = arrayListOf()
+        private var allLists: ArrayList<Pair<String, List<*>>> = arrayListOf()
 
-    fun getDocumentInGames(documentName: String, callback: firebaseCallback){
-        val idList = ArrayList<Int>()
-        db.collection(gamePath)
+        fun getDocumentInGames(documentName: String, callback: firebaseCallback) {
+            val idList = ArrayList<Int>()
+            db.collection(gamePath)
                 .document(documentName.toLowerCase(Locale.ROOT))
                 .get()
                 .addOnSuccessListener { document ->
@@ -30,50 +31,54 @@ class Firebase {
                     }
 
                 }
-    }
+        }
 
-    fun updateDocumentInGames(documentName: String, updatedIdList: List<Int>){
+        fun updateDocumentInGames(documentName: String, updatedIdList: List<Int>) {
 
-        val newList = hashMapOf(
+            val newList = hashMapOf(
                 "game_ids" to updatedIdList
-        )
+            )
 
-        db.collection(gamePath)
+            db.collection(gamePath)
                 .document(documentName)
                 .set(newList)
                 .addOnSuccessListener {
                     Log.d("Firestore", "DocumentSnapshot successfully written!")
                 }
                 .addOnFailureListener { e -> Log.w("Firestore", "Error writing document", e) }
-    }
+        }
 
-    fun deleteDocumentInGames(documentName: String, callback: writeCallback){
-        db.collection(gamePath)
+        fun deleteDocumentInGames(documentName: String, callback: writeCallback) {
+            db.collection(gamePath)
                 .document(documentName)
                 .delete()
                 .addOnSuccessListener {
                     Log.d("Firestore", "Document $documentName successfully deleted!")
                     callback.onSuccess()
                 }
-    }
+        }
 
 
-    fun addNewGameList(listName: String, callback: writeCallback, initGames: List<Int> = ArrayList()){
-        val newList = hashMapOf(
+        fun addNewGameList(
+            listName: String,
+            callback: writeCallback,
+            initGames: List<Int> = ArrayList()
+        ) {
+            val newList = hashMapOf(
                 "game_ids" to initGames
-        )
+            )
 
-        db.collection(gamePath)
+            db.collection(gamePath)
                 .document(listName.toLowerCase(Locale.ROOT))
                 .set(newList)
                 .addOnSuccessListener {
                     Log.d("Firestore", "Game List with name $listName successfully written!")
                     callback.onSuccess()
                 }
-    }
+        }
 
-    fun getAllListNames(callback: firebaseListNameCallback){
-        db.collection(gamePath)
+        fun getAllListNames(callback: firebaseListNameCallback) {
+            db.collection(gamePath)
                 .get()
                 .addOnSuccessListener { result ->
                     val listNames = ArrayList<Pair<String, Int>>()
@@ -86,38 +91,36 @@ class Firebase {
                 .addOnFailureListener { exception ->
                     Log.w("Firestore", "Error getting documents.", exception)
                 }
-    }
+        }
 
-    fun getAllLists(callback: firebaseListsCachedCallback){
-        db.collection(gamePath)
+        fun getAllLists(callback: firebaseListsCachedCallback) {
+            db.collection(gamePath)
                 .get()
-                .addOnSuccessListener{ result ->
-                    FirebaseCache.cachedList().clear()
-                    for (document in result){
+                .addOnSuccessListener { result ->
+                    allLists.clear()
+                    for (document in result) {
                         val gameIds = document.get("game_ids") as List<Long>
-                        Log.d("Game List", Pair(document.id, gameIds).toString())
-                        FirebaseCache.cachedList().add(Pair(document.id, gameIds))
-                        Log.d("Game List", FirebaseCache.cachedList().toString())
+                        allLists.add(Pair(document.id, gameIds))
                         callback.onSuccess()
                     }
                 }
                 .addOnFailureListener { exception ->
                     Log.w("Firestore", "Error getting documents.", exception)
                 }
-    }
+        }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getCachedLists(): List<Pair<String, List<Long>>>{
-        return FirebaseCache.cachedList() as List<Pair<String, List<Long>>>
-    }
+        @Suppress("UNCHECKED_CAST")
+        fun getCachedLists(): List<Pair<String, List<Long>>> {
+            return allLists as List<Pair<String, List<Long>>>
+        }
 
-    fun searchGameInDocuments(callback: firebaseSearchListCallback, id: Int){
-        db.collection(gamePath)
+        fun searchGameInDocuments(callback: firebaseSearchListCallback, id: Int) {
+            db.collection(gamePath)
                 .whereArrayContains("game_ids", id)
                 .get()
                 .addOnSuccessListener { result ->
                     var listName = ""
-                    for(document in result){
+                    for (document in result) {
                         listName = document.id
                     }
                     callback.onSuccess(listName)
@@ -125,31 +128,26 @@ class Firebase {
                 .addOnFailureListener { exception ->
                     Log.w("Firestore", "Error getting documents.", exception)
                 }
-    }
+        }
 
-    interface firebaseCallback{
-        fun onSuccess(idList: List<Int>)
     }
+        interface firebaseCallback {
+            fun onSuccess(idList: List<Int>)
+        }
 
-    interface firebaseListNameCallback{
-        fun onSuccess(listNames: List<Pair<String, Int>>)
-    }
+        interface firebaseListNameCallback {
+            fun onSuccess(listNames: List<Pair<String, Int>>)
+        }
 
-    interface firebaseSearchListCallback{
-        fun onSuccess(listName: String)
-    }
+        interface firebaseSearchListCallback {
+            fun onSuccess(listName: String)
+        }
 
-    interface firebaseListsCachedCallback{
-        fun onSuccess()
-    }
+        interface firebaseListsCachedCallback {
+            fun onSuccess()
+        }
 
-    interface writeCallback{
-        fun onSuccess()
-    }
-}
-
-class FirebaseCache{
-    companion object {
-        fun cachedList(): ArrayList<Pair<String, List<Long>>> = arrayListOf()
-    }
+        interface writeCallback {
+            fun onSuccess()
+        }
 }

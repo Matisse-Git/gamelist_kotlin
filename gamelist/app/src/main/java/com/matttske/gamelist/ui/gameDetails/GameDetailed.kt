@@ -19,7 +19,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import org.json.JSONStringer
 import kotlin.collections.ArrayList
 
-private val fb = Firebase()
+private val fb = Firebase.FirebaseCache
 private val api = API()
 
 private var gameId: Int = 0
@@ -77,10 +77,13 @@ class GameDetailed : AppCompatActivity() {
                     gameListButton.visibility = View.GONE
                     val addedGameListButton = findViewById<MaterialButton>(R.id.added_list_button)
                     addedGameListButton.text = gameStatus
-                    gameListButton.setOnClickListener {
+                    addedGameListButton.setOnClickListener {
                         startFilterActivity(1)
                     }
-                    addedGameListButton.setOnClickListener {
+                }
+                else{
+                    val gameListButton = findViewById<MaterialButton>(R.id.list_button)
+                    gameListButton.setOnClickListener {
                         startFilterActivity(1)
                     }
                 }

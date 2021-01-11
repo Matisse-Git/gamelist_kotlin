@@ -45,7 +45,7 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
     private lateinit var adapter: GameRecycleAdapter
     private lateinit var layoutManager: LinearLayoutManager
 
-    private val fb = Firebase()
+    private val fb = Firebase.FirebaseCache
     private val api = API()
     val callbackObj = object : SingleReturnValueCallBack {
         override fun onSuccess(value: Game) {
@@ -67,20 +67,7 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
     }
     private val fbCachedCallback = object : Firebase.firebaseListsCachedCallback {
         override fun onSuccess() {
-            //cachedFbLists = Firebase.cachedList()
-            cachedFbLists.forEach {
-                if (it.first == currentListName){
-                    idList.clear()
-                    val listToAdd = arrayListOf<Int>()
-                    it.second.forEach {
-                        listToAdd.add(it.toInt())
-                    }
-                    idList.addAll(listToAdd)
-                    for (id in idList){
-                        api.getGameById(callbackObj, id)
-                    }
-                }
-            }
+            refreshIdList()
         }
     }
     private val touchHelper = ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,0){
@@ -112,18 +99,34 @@ class DashboardFragment : Fragment(), SearchBarInput, GameRecycleAdapter.OnItemC
 
         findViews(root)
 
-        if (FirebaseCache.cachedList().isEmpty()){
+        if (fb.getCachedLists().isEmpty()){
             Log.d("Game List", "Cached Firebase Lists Are Empty.")
             fb.getAllLists(fbCachedCallback)
         }
         else{
+            refreshIdList()
             Log.d("Game List", "List was added using cached firebase list.")
         }
 
         return root
     }
 
-
+    private fun refreshIdList(){
+        cachedFbLists = fb.getCachedLists()
+        cachedFbLists.forEach {
+            if (it.first == currentListName){
+                idList.clear()
+                val listToAdd = arrayListOf<Int>()
+                it.second.forEach {
+                    listToAdd.add(it.toInt())
+                }
+                idList.addAll(listToAdd)
+                for (id in idList){
+                    api.getGameById(callbackObj, id)
+                }
+            }
+        }
+    }
 
     private fun reorderList() {
         val newGameList = ArrayList<Game>()
