@@ -28,6 +28,28 @@
                 android:foreground="@drawable/gradient_top"
                 />
 
+            <ImageButton
+                android:id="@+id/favourite_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="24dp"
+                android:src="@drawable/favourite_heart_black"
+                android:tint="@color/red"
+                android:background="@color/Transparent"/>
+
+            <ImageButton
+                android:id="@+id/favourite_outline_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="24dp"
+                android:src="@drawable/favourite_heart_outline_black"
+                android:tint="@color/red"
+                android:background="@color/Transparent"/>
+
             <RelativeLayout
                 android:id="@+id/list_buttons_container"
                 android:layout_width="wrap_content"

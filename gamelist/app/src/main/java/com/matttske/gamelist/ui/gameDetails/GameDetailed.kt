@@ -35,6 +35,8 @@ private lateinit var gameStatus: String
 
 private lateinit var gameTitle: TextView
 
+private var isFavourite = false
+
 class GameDetailed : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,7 @@ class GameDetailed : AppCompatActivity() {
 
         setDetailedGame()
         findListName(gameId)
+        checkFavourite()
     }
 
     private fun setDetailedGame() {
@@ -154,12 +157,17 @@ class GameDetailed : AppCompatActivity() {
         val deleteGameButton = findViewById<MaterialButton>(R.id.delete_game_button)
         deleteGameButton.setOnClickListener {
             deleteGameFromLists()
-            fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
-                override fun onSuccess() {
-                    findListName(currentGame.id)
-                }
-            })
+            findListName(currentGame.id)
             Toast.makeText(this@GameDetailed, "${currentGame.name} has been deleted from your lists!", Toast.LENGTH_SHORT).show()
+        }
+
+        val favouriteButton = findViewById<ImageButton>(R.id.favourite_button)
+        favouriteButton.setOnClickListener {
+            addGameToFavourites()
+        }
+        val favouriteOutlineButton = findViewById<ImageButton>(R.id.favourite_outline_button)
+        favouriteOutlineButton.setOnClickListener {
+            addGameToFavourites()
         }
     }
 
@@ -202,15 +210,46 @@ class GameDetailed : AppCompatActivity() {
         fb.addGameToDocument(listName, currentGame.id, object: Firebase.firebaseListsCachedCallback{
             override fun onSuccess() {
                 Log.d("List", "Add Game Success")
-                fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
-                    override fun onSuccess() {
-                        Log.d("List", "Update Cached List Success")
-                        findListName(currentGame.id)
-                    }
-                })
+                findListName(currentGame.id)
                 Toast.makeText(this@GameDetailed, "${currentGame.name} has been added to $listName!", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun addGameToFavourites(){
+        if (isFavourite){
+            fb.deleteGameFromDocuments(currentGame.id, object: Firebase.firebaseListsCachedCallback{
+                override fun onSuccess() {
+                    Toast.makeText(this@GameDetailed, "${currentGame.name} has been removed from your favourites!", Toast.LENGTH_SHORT).show()
+                    checkFavourite()
+                }
+            })
+        }
+        else{
+            fb.addGameToDocument("favourites", currentGame.id, object: Firebase.firebaseListsCachedCallback{
+                override fun onSuccess() {
+                    Toast.makeText(this@GameDetailed, "${currentGame.name} has been added to your favourites!", Toast.LENGTH_SHORT).show()
+                    checkFavourite()
+                }
+            })
+        }
+    }
+
+    private fun checkFavourite(){
+        val favouriteButton = findViewById<ImageView>(R.id.favourite_button)
+        val favouriteOutlineButton = findViewById<ImageView>(R.id.favourite_outline_button)
+        if (fb.getFavouritesCache().contains(gameId.toLong())){
+            Log.d("Favourite", "Game is favourite")
+            isFavourite = true
+            favouriteButton.visibility = View.VISIBLE
+            favouriteOutlineButton.visibility = View.GONE
+        }
+        else{
+            Log.d("Favourite", "Game is not favourite")
+            isFavourite = false
+            favouriteButton.visibility = View.GONE
+            favouriteOutlineButton.visibility = View.VISIBLE
+        }
     }
 
     private fun animateViewUp(){

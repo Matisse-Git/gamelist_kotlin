@@ -14,6 +14,7 @@ class Firebase {
         private val gamePath = "Users/${User.id()}/games"
 
         private var allLists: ArrayList<Pair<String, List<*>>> = arrayListOf()
+        private var favourites: ArrayList<Long> = arrayListOf()
 
         private fun getDocumentInGames(documentName: String, callback: firebaseCallback) {
             val idList = ArrayList<Int>()
@@ -44,7 +45,6 @@ class Firebase {
                 .document(documentName)
                 .set(newList)
                 .addOnSuccessListener {
-                    Log.d("Firestore", "DocumentSnapshot successfully written!")
                     callback.onSuccess()
                 }
                 .addOnFailureListener { e -> Log.w("Firestore", "Error writing document", e) }
@@ -69,30 +69,65 @@ class Firebase {
 
         fun deleteGameFromDocuments(gameId: Int, callback: firebaseListsCachedCallback){
             val newListInt = arrayListOf<Int>()
+            var newList = mutableListOf<Long>()
+            var listToUpdate: Pair<String, List<Long>> = Pair("", arrayListOf())
             getCachedLists().forEach {
                 if (it.second.contains(gameId.toLong())){
                     val index = it.second.indexOf(gameId.toLong())
-                    val newList = it.second.toMutableList()
+                    newList = it.second.toMutableList()
                     newList.forEach {
                         newListInt.add(it.toInt())
                     }
+                    newList.remove(gameId.toLong())
                     newListInt.removeAt(index)
+                    Log.d("Firestore", "$gameId was successfully deleted from ${it.first}!")
                     updateDocumentInGames(it.first, newListInt, callback)
+                    listToUpdate = it
                 }
+            }
+            if (listToUpdate.first != ""){
+                allLists.remove(listToUpdate)
+                allLists.add(Pair(listToUpdate.first, newList))
+            }
+            if(favourites.contains(gameId.toLong())){
+                val newListInt = arrayListOf<Int>()
+                favourites.remove(gameId.toLong())
+                favourites.forEach {
+                    newListInt.add(it.toInt())
+                }
+                updateDocumentInGames("favourites", newListInt, callback)
             }
         }
 
         fun addGameToDocument(documentName: String, gameId: Int, callback: firebaseListsCachedCallback){
+            if (documentName == "favourites"){
+                val newListInt = arrayListOf<Int>()
+                favourites.add(gameId.toLong())
+                favourites.forEach {
+                    newListInt.add(it.toInt())
+                }
+                updateDocumentInGames("favourites", newListInt, callback)
+                return
+            }
+            var newList = mutableListOf<Long>()
             val newListInt = arrayListOf<Int>()
+            var listToUpdate: Pair<String, List<Long>> = Pair("", arrayListOf())
             getCachedLists().forEach {
                 if (it.first == documentName){
-                    val newList = it.second.toMutableList()
+                    newList = it.second.toMutableList()
                     newList.forEach {
                         newListInt.add(it.toInt())
                     }
+                    newList.add(gameId.toLong())
                     newListInt.add(gameId)
                     updateDocumentInGames(it.first, newListInt, callback)
+                    listToUpdate = it
+                    Log.d("Firestore", "$gameId was successfully added to $documentName!")
                 }
+            }
+            if (listToUpdate.first != ""){
+                allLists.remove(listToUpdate)
+                allLists.add(Pair(listToUpdate.first, newList))
             }
         }
 
@@ -141,10 +176,15 @@ class Firebase {
                             if (document.id != "favourites"){
                                 val gameIds = document.get("game_ids") as List<Long>
                                 allLists.add(Pair(document.id, gameIds))
-                                callback.onSuccess()
+                            }
+                            else{
+                                favourites.clear()
+                                favourites.addAll(document.get("game_ids") as List<Long>)
                             }
                         }
                     }
+                    Log.d("Firestore", "Successfully read all lists and cached them to app.")
+                    callback.onSuccess()
                 }
                 .addOnFailureListener { exception ->
                     Log.w("Firestore", "Error getting documents.", exception)
@@ -154,6 +194,11 @@ class Firebase {
         @Suppress("UNCHECKED_CAST")
         fun getCachedLists(): List<Pair<String, List<Long>>> {
             return allLists as List<Pair<String, List<Long>>>
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        fun getFavouritesCache(): List<Long> {
+            return favourites
         }
 
         fun searchGameInDocuments(callback: firebaseSearchListCallback, id: Int) {

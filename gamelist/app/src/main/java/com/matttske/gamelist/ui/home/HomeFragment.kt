@@ -2,6 +2,7 @@ package com.matttske.gamelist.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.matttske.gamelist.MainActivity
 import com.matttske.gamelist.R
-import com.matttske.gamelist.data.API
-import com.matttske.gamelist.data.Game
-import com.matttske.gamelist.data.GameRecycleAdapter
-import com.matttske.gamelist.data.ReturnValueCallBack
+import com.matttske.gamelist.data.*
 import com.matttske.gamelist.ui.gameDetails.GameDetailed
 import com.matttske.gamelist.ui.searching.search_game
 import kotlin.random.Random
@@ -66,7 +64,16 @@ class HomeFragment : Fragment(), GameRecycleAdapter.OnItemCLickListener {
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
 
+        val fb = Firebase.FirebaseCache
+        if (fb.getCachedLists().isEmpty()){
+            fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
+                override fun onSuccess() {
+                    Log.d("Game Lists", "Game lists successfully cached in app.")
+                }
+            })
+        }
         getGameList()
+
 
         return root
     }
