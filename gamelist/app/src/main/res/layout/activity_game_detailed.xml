@@ -28,29 +28,50 @@
                 android:foreground="@drawable/gradient_top"
                 />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/list_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:layout_marginHorizontal="40dp"
+            <RelativeLayout
+                android:id="@+id/list_buttons_container"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
                 android:layout_below="@id/game_icon_container"
-                style="@style/Widget.MaterialComponents.Button"
-                android:text="Add To List"
-                android:textColor="@color/black"
-                />
+                android:layout_marginTop="18dp"
+                android:layout_marginHorizontal="40dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/added_list_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:layout_marginHorizontal="40dp"
-                android:layout_below="@id/game_icon_container"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                app:strokeColor="?colorPrimary"
-                android:textColor="@color/white"
-                />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/list_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:text="Add To List"
+                    android:textColor="@color/black"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/added_list_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toStartOf="@+id/delete_game_button"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="?colorPrimary"
+                    android:textColor="@color/white"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/delete_game_button"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="12dp"
+                    android:layout_alignParentEnd="true"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="@color/red"
+                    app:rippleColor="@color/red"
+                    app:icon="@drawable/trash_outline_black"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconTint="@color/red"
+                    />
+
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/game_icon_container"

@@ -59,8 +59,6 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
             Log.d("Game List", "List was added using cached firebase list.")
             refreshListNames()
         }
-
-        fb.getAllListNames(fbNameListCallbackObj)
     }
 
     private fun refreshListNames(){
@@ -114,7 +112,10 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
 
         val callbackObj = object : Firebase.writeCallback {
             override fun onSuccess() {
-                fb.getAllListNames(fbNameListCallbackObj)
+                listNames.clear()
+                fb.getCachedLists().forEach {
+                    listNames.add(Pair(it.first, it.second.size))
+                }
                 listNameAdapter.notifyItemRangeChanged(0, listNames.size)
             }
         }
@@ -152,7 +153,10 @@ class ListNamesFilterActivity : AppCompatActivity(), ListNameFIlterAdapter.OnIte
                         dialog.dismiss()
                         val callbackObj = object : Firebase.writeCallback {
                             override fun onSuccess() {
-                                fb.getAllListNames(fbNameListCallbackObj)
+                                listNames.clear()
+                                fb.getCachedLists().forEach {
+                                    listNames.add(Pair(it.first, it.second.size))
+                                }
                                 listNameAdapter.notifyItemRangeChanged(0, listNames.size)
                             }
                         }

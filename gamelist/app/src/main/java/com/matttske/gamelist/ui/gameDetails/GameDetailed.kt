@@ -102,12 +102,16 @@ class GameDetailed : AppCompatActivity() {
             gameListButton.visibility = View.GONE
             val addedGameListButton = findViewById<MaterialButton>(R.id.added_list_button)
             addedGameListButton.text = gameStatus
+            addedGameListButton.visibility = View.VISIBLE
             addedGameListButton.setOnClickListener {
                 startFilterActivity(1)
             }
         }
         else{
+            val addedGameListButton = findViewById<MaterialButton>(R.id.added_list_button)
+            addedGameListButton.visibility = View.GONE
             val gameListButton = findViewById<MaterialButton>(R.id.list_button)
+            gameListButton.visibility = View.VISIBLE
             gameListButton.setOnClickListener {
                 startFilterActivity(1)
             }
@@ -141,6 +145,22 @@ class GameDetailed : AppCompatActivity() {
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .circleCrop()
                     .into(gameIcon)
+
+        val gameListButton = findViewById<MaterialButton>(R.id.list_button)
+        gameListButton.setOnClickListener {
+            startFilterActivity(1)
+        }
+
+        val deleteGameButton = findViewById<MaterialButton>(R.id.delete_game_button)
+        deleteGameButton.setOnClickListener {
+            deleteGameFromLists()
+            fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
+                override fun onSuccess() {
+                    findListName(currentGame.id)
+                }
+            })
+            Toast.makeText(this@GameDetailed, "${currentGame.name} has been deleted from your lists!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun startFilterActivity(requestCode: Int) {
@@ -153,32 +173,44 @@ class GameDetailed : AppCompatActivity() {
         if (requestCode == 1){
             if (resultCode == Activity.RESULT_OK){
                 val listName = data?.getStringExtra("result").toString()
+                Log.d("List", listName)
                 addGameToList(listName)
             }
         }
     }
 
-    private fun addGameToList(listName: String){
-        val idList: ArrayList<Int> = arrayListOf()
-        fb.getCachedLists().forEach {
-            if (it.first == listName){
-                it.second.forEach {
-                    idList.add(it.toInt())
-                }
-            }
-        }
-        idList.add(currentGame.id)
-        fb.updateDocumentInGames(listName, idList, object: Firebase.firebaseListsCachedCallback{
+    private fun deleteGameFromLists(){
+        fb.deleteGameFromDocuments(currentGame.id, object: Firebase.firebaseListsCachedCallback{
             override fun onSuccess() {
-                fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
-                    override fun onSuccess() {
-                        refreshGameStatus(currentGame.id)
-                    }
-                })
-                Toast.makeText(applicationContext, "${currentGame.name} was added to $listName!", Toast.LENGTH_SHORT).show()
+                Log.d("List", "Delete Game Success")
             }
         })
+    }
 
+    private fun addGameToList(listName: String){
+        fb.getCachedLists().forEach {
+            if (it.first == listName && it.second.contains(currentGame.id.toLong())){
+                Toast.makeText(this@GameDetailed, "${currentGame.name} has already been added to $listName.", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+            fb.deleteGameFromDocuments(currentGame.id, object: Firebase.firebaseListsCachedCallback{
+                override fun onSuccess() {
+                    Log.d("List", "Delete Game Success")
+                }
+            })
+        fb.addGameToDocument(listName, currentGame.id, object: Firebase.firebaseListsCachedCallback{
+            override fun onSuccess() {
+                Log.d("List", "Add Game Success")
+                fb.getAllLists(object: Firebase.firebaseListsCachedCallback{
+                    override fun onSuccess() {
+                        Log.d("List", "Update Cached List Success")
+                        findListName(currentGame.id)
+                    }
+                })
+                Toast.makeText(this@GameDetailed, "${currentGame.name} has been added to $listName!", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun animateViewUp(){

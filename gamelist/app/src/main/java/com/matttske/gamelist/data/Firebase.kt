@@ -1,6 +1,7 @@
 package com.matttske.gamelist.data
 
 import android.util.Log
+import androidx.core.util.lruCache
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.collections.ArrayList
@@ -14,7 +15,7 @@ class Firebase {
 
         private var allLists: ArrayList<Pair<String, List<*>>> = arrayListOf()
 
-        fun getDocumentInGames(documentName: String, callback: firebaseCallback) {
+        private fun getDocumentInGames(documentName: String, callback: firebaseCallback) {
             val idList = ArrayList<Int>()
             db.collection(gamePath)
                 .document(documentName.toLowerCase(Locale.ROOT))
@@ -50,6 +51,12 @@ class Firebase {
         }
 
         fun deleteDocumentInGames(documentName: String, callback: writeCallback) {
+            getCachedLists().forEach {
+                if (it.first == documentName){
+                    val index = getCachedLists().indexOf(it)
+                    allLists.removeAt(index)
+                }
+            }
             db.collection(gamePath)
                 .document(documentName)
                 .delete()
@@ -60,11 +67,41 @@ class Firebase {
         }
 
 
+        fun deleteGameFromDocuments(gameId: Int, callback: firebaseListsCachedCallback){
+            val newListInt = arrayListOf<Int>()
+            getCachedLists().forEach {
+                if (it.second.contains(gameId.toLong())){
+                    val index = it.second.indexOf(gameId.toLong())
+                    val newList = it.second.toMutableList()
+                    newList.forEach {
+                        newListInt.add(it.toInt())
+                    }
+                    newListInt.removeAt(index)
+                    updateDocumentInGames(it.first, newListInt, callback)
+                }
+            }
+        }
+
+        fun addGameToDocument(documentName: String, gameId: Int, callback: firebaseListsCachedCallback){
+            val newListInt = arrayListOf<Int>()
+            getCachedLists().forEach {
+                if (it.first == documentName){
+                    val newList = it.second.toMutableList()
+                    newList.forEach {
+                        newListInt.add(it.toInt())
+                    }
+                    newListInt.add(gameId)
+                    updateDocumentInGames(it.first, newListInt, callback)
+                }
+            }
+        }
+
         fun addNewGameList(
             listName: String,
             callback: writeCallback,
             initGames: List<Int> = ArrayList()
         ) {
+            allLists.add(Pair(listName, initGames))
             val newList = hashMapOf(
                 "game_ids" to initGames
             )
@@ -100,9 +137,13 @@ class Firebase {
                 .addOnSuccessListener { result ->
                     allLists.clear()
                     for (document in result) {
-                        val gameIds = document.get("game_ids") as List<Long>
-                        allLists.add(Pair(document.id, gameIds))
-                        callback.onSuccess()
+                        if (document.get("game_ids") != null){
+                            if (document.id != "favourites"){
+                                val gameIds = document.get("game_ids") as List<Long>
+                                allLists.add(Pair(document.id, gameIds))
+                                callback.onSuccess()
+                            }
+                        }
                     }
                 }
                 .addOnFailureListener { exception ->
